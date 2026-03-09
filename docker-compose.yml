@@ -70,7 +70,7 @@ services:
     restart: unless-stopped
 
   cdn:
-    image: mcearth-reforged/reforge:utils-cdn-latest
+    image: mcearth-reforged/:utils-cdn-latest
     hostname: cdn
     networks:
       - external_network
