@@ -16,8 +16,8 @@ RUN mkdir Fountain-bridge; wget -O - https://github.com/Project-Genoa/Fountain-b
 RUN mkdir Fountain-fabric; wget -O - https://github.com/Project-Genoa/Fountain-fabric/archive/5b68ee996742791987bbd734117bbef4ad41bd47.tar.gz | gunzip | tar -C Fountain-fabric -x --strip-components=1
 RUN mkdir Fountain-connector-plugin-base; wget -O - https://github.com/Project-Genoa/Fountain-connector-plugin-base/archive/ddb780d03e61785cc1e1cb9e920e7e5bf14a3ff7.tar.gz | gunzip | tar -C Fountain-connector-plugin-base -x --strip-components=1
 RUN mkdir Protocol; wget -O - https://github.com/Project-Genoa/Protocol/archive/b5b4225de434115c4098b13df7419bf2db61319f.tar.gz | gunzip | tar -C Protocol -x --strip-components=1
-WORKDIR /vienna
-RUN mkdir Vienna; wget -O - https://github.com/Project-Genoa/Vienna/archive/ada65564a1071386bd18140e57e05f2ab97c4fbd.tar.gz | gunzip | tar -C Vienna -x --strip-components=1
+WORKDIR /mce-reforged
+RUN mkdir Reforge; wget -O - https://github.com/MCEarth-Reforged/Reforge/archive/refs/heads.tar.gz | gunzip | tar -C Vienna -x --strip-components=1
 RUN mkdir Vienna-fabric; wget -O - https://github.com/Project-Genoa/Vienna-fabric/archive/7ecefce63402a7a6d5ddc0448e8bd4e98dc060c8.tar.gz | gunzip | tar -C Vienna-fabric -x --strip-components=1
 WORKDIR /fountain/Protocol
 RUN PATH=/java-8/bin:$PATH ./gradlew publishToMavenLocal
@@ -28,10 +28,10 @@ RUN PATH=/java-17/bin:$PATH ./mvnw package
 WORKDIR /fountain/Fountain-fabric
 RUN PATH=/java-17/bin:$PATH ./gradlew build
 RUN PATH=/java-17/bin:$PATH ./gradlew publishToMavenLocal
-WORKDIR /vienna/Vienna
+WORKDIR /mce-reforged/Reforge
 RUN PATH=/java-17/bin:$PATH ./mvnw package
 RUN PATH=/java-17/bin:$PATH ./mvnw install
-WORKDIR /vienna/Vienna-fabric
+WORKDIR /mce-reforged/Vienna-fabric
 RUN PATH=/java-17/bin:$PATH ./gradlew build
 
 FROM java AS fountain-bridge
@@ -53,58 +53,58 @@ CMD ["-nogui"]
 EXPOSE 25565/tcp
 VOLUME /fabric/world
 
-FROM java AS vienna-eventbus
-COPY --from=build /vienna/Vienna/eventbus/server/target/eventbus-server-0.0.1-SNAPSHOT-jar-with-dependencies.jar /vienna/
-WORKDIR /vienna
+FROM java AS reforge-eventbus
+COPY --from=build /mce-reforged/Reforge/eventbus/server/target/eventbus-server-0.0.1-SNAPSHOT-jar-with-dependencies.jar /mce-reforged/
+WORKDIR /mce-reforged
 ENTRYPOINT ["/java/bin/java", "-jar", "eventbus-server-0.0.1-SNAPSHOT-jar-with-dependencies.jar"]
 EXPOSE 5532/tcp
 
-FROM java AS vienna-objectstore
-COPY --from=build /vienna/Vienna/objectstore/server/target/objectstore-server-0.0.1-SNAPSHOT-jar-with-dependencies.jar /vienna/
-WORKDIR /vienna
+FROM java AS reforge-objectstore
+COPY --from=build /mce-reforged/Reforge/objectstore/server/target/objectstore-server-0.0.1-SNAPSHOT-jar-with-dependencies.jar /mce-reforged/
+WORKDIR /mce-reforged
 ENTRYPOINT ["/java/bin/java", "-jar", "objectstore-server-0.0.1-SNAPSHOT-jar-with-dependencies.jar", "-dataDir", "/data"]
 EXPOSE 5396/tcp
 VOLUME /data
 
-FROM java AS vienna-apiserver
-COPY --from=build /vienna/Vienna/apiserver/target/apiserver-0.0.1-SNAPSHOT-jar-with-dependencies.jar /vienna/
-WORKDIR /vienna
+FROM java AS reforge-apiserver
+COPY --from=build /mce-reforged/Reforge/apiserver/target/apiserver-0.0.1-SNAPSHOT-jar-with-dependencies.jar /mce-reforged/
+WORKDIR /mce-reforged
 ENTRYPOINT ["/java/bin/java", "-jar", "apiserver-0.0.1-SNAPSHOT-jar-with-dependencies.jar", "-db", "/data/earth.db", "-staticData", "/static"]
 EXPOSE 8080/tcp
 VOLUME /data
 VOLUME /static
 
-FROM java AS vienna-utils-locator
-COPY --from=build /vienna/Vienna/utils/locator/target/utils-locator-0.0.1-SNAPSHOT-jar-with-dependencies.jar /vienna/
-WORKDIR /vienna
+FROM java AS reforge-utils-locator
+COPY --from=build /mce-reforged/Reforge/utils/locator/target/utils-locator-0.0.1-SNAPSHOT-jar-with-dependencies.jar /mce-reforged/
+WORKDIR /mce-reforged
 ENTRYPOINT ["/java/bin/java", "-jar", "utils-locator-0.0.1-SNAPSHOT-jar-with-dependencies.jar"]
 EXPOSE 8080/tcp
 
-FROM java AS vienna-utils-cdn
-COPY --from=build /vienna/Vienna/utils/cdn/target/utils-cdn-0.0.1-SNAPSHOT-jar-with-dependencies.jar /vienna/
-WORKDIR /vienna
+FROM java AS reforge-utils-cdn
+COPY --from=build /mce-reforged/Reforge/utils/cdn/target/utils-cdn-0.0.1-SNAPSHOT-jar-with-dependencies.jar /mce-reforged/
+WORKDIR /mce-reforged
 ENTRYPOINT ["/java/bin/java", "-jar", "utils-cdn-0.0.1-SNAPSHOT-jar-with-dependencies.jar", "-resourcePackFile", "/data/resourcepack"]
 EXPOSE 8080/tcp
 VOLUME /data
 
-FROM java AS vienna-buildplate-launcher
-COPY --from=build /vienna/Vienna/buildplate/launcher/target/buildplate-launcher-0.0.1-SNAPSHOT-jar-with-dependencies.jar /vienna/
-COPY --from=build /vienna/Vienna/buildplate/connector-plugin/target/buildplate-connector-plugin-0.0.1-SNAPSHOT-jar-with-dependencies.jar /vienna/
+FROM java AS reforge-buildplate-launcher
+COPY --from=build /mce-reforged/Reforge/buildplate/launcher/target/buildplate-launcher-0.0.1-SNAPSHOT-jar-with-dependencies.jar /mce-reforged/
+COPY --from=build /mce-reforged/Reforge/buildplate/connector-plugin/target/buildplate-connector-plugin-0.0.1-SNAPSHOT-jar-with-dependencies.jar /mce-reforged/
 COPY --from=fountain-bridge /fountain /fountain
 COPY --from=fountain-fabric /fabric /fabric
-COPY --from=build /vienna/Vienna-fabric/build/libs/vienna-0.0.1.jar /fabric/mods/
-WORKDIR /vienna
-ENTRYPOINT ["/java/bin/java", "-jar", "buildplate-launcher-0.0.1-SNAPSHOT-jar-with-dependencies.jar", "-bridgeJar", "/fountain/fountain-0.0.1-SNAPSHOT-jar-with-dependencies.jar", "-serverTemplateDir", "/fabric", "-fabricJarName", "fabric-server-mc.1.20.4-loader.0.15.10-launcher.1.0.1.jar", "-connectorPluginJar", "/vienna/buildplate-connector-plugin-0.0.1-SNAPSHOT-jar-with-dependencies.jar"]
+COPY --from=build /mce-reforged/Vienna-fabric/build/libs/vienna-0.0.1.jar /fabric/mods/
+WORKDIR /mce-reforged
+ENTRYPOINT ["/java/bin/java", "-jar", "buildplate-launcher-0.0.1-SNAPSHOT-jar-with-dependencies.jar", "-bridgeJar", "/fountain/fountain-0.0.1-SNAPSHOT-jar-with-dependencies.jar", "-serverTemplateDir", "/fabric", "-fabricJarName", "fabric-server-mc.1.20.4-loader.0.15.10-launcher.1.0.1.jar", "-connectorPluginJar", "/mce-reforged/buildplate-connector-plugin-0.0.1-SNAPSHOT-jar-with-dependencies.jar"]
 EXPOSE 19132-19141/udp
 
-FROM java AS vienna-tappablesgenerator
-COPY --from=build /vienna/Vienna/tappablesgenerator/target/tappablesgenerator-0.0.1-SNAPSHOT-jar-with-dependencies.jar /vienna/
-WORKDIR /vienna
+FROM java AS reforge-tappablesgenerator
+COPY --from=build /mce-reforged/Reforge/tappablesgenerator/target/tappablesgenerator-0.0.1-SNAPSHOT-jar-with-dependencies.jar /mce-reforged/
+WORKDIR /mce-reforged
 ENTRYPOINT ["/java/bin/java", "-jar", "tappablesgenerator-0.0.1-SNAPSHOT-jar-with-dependencies.jar", "-staticData", "/static"]
 VOLUME /static
 
-FROM java AS vienna-utils-tools-buildplate-importer
-COPY --from=build /vienna/Vienna/utils/tools/buildplate-importer/target/utils-tools-buildplate-importer-0.0.1-SNAPSHOT-jar-with-dependencies.jar /vienna/
-WORKDIR /vienna
+FROM java AS reforge-utils-tools-buildplate-importer
+COPY --from=build /mce-reforged/Reforge/utils/tools/buildplate-importer/target/utils-tools-buildplate-importer-0.0.1-SNAPSHOT-jar-with-dependencies.jar /mce-reforged/
+WORKDIR /mce-reforged
 ENTRYPOINT ["/java/bin/java", "-jar", "utils-tools-buildplate-importer-0.0.1-SNAPSHOT-jar-with-dependencies.jar", "-db", "/data/earth.db"]
 VOLUME /data
