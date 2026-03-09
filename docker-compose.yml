@@ -10,14 +10,14 @@ networks:
 
 services:
   eventbus:
-    image: mcearth-reforged/reforge:eventbus-latest
+    image: thelonedrifter/reforge:eventbus-latest
     hostname: eventbus
     networks:
       - internal_network
     restart: unless-stopped
 
   objectstore:
-    image: mcearth-reforged/reforge:objectstore-latest
+    image: thelonedrifter/reforge:objectstore-latest
     hostname: objectstore
     networks:
       - internal_network
@@ -26,7 +26,7 @@ services:
     restart: unless-stopped
 
   apiserver:
-    image: mcearth-reforged/reforge:apiserver-latest
+    image: thelonedrifter/reforge:apiserver-latest
     command: -eventbus eventbus -objectstore objectstore
     hostname: apiserver
     networks:
@@ -43,7 +43,7 @@ services:
     restart: unless-stopped
 
   buildplate-launcher:
-    image: mcearth-reforged/reforge:buildplate-launcher-latest
+    image: thelonedrifter/reforge:buildplate-launcher-latest
     command: -eventbus eventbus -publicAddress ${ADDRESS}
     hostname: buildplate-launcher
     networks:
@@ -57,7 +57,7 @@ services:
     restart: unless-stopped
 
   tappablesgenerator:
-    image: mcearth-reforged/reforge:tappablesgenerator-latest
+    image: thelonedrifter/reforge:tappablesgenerator-latest
     command: -eventbus eventbus
     hostname: tappablesgenerator
     networks:
@@ -70,7 +70,7 @@ services:
     restart: unless-stopped
 
   cdn:
-    image: mcearth-reforged/reforge:utils-cdn-latest
+    image: thelonedrifter/reforge:utils-cdn-latest
     hostname: cdn
     networks:
       - external_network
@@ -81,7 +81,7 @@ services:
     restart: unless-stopped
 
   locator:
-    image: mcearth-reforged/reforge:utils-locator-latest
+    image: thelonedrifter/reforge:utils-locator-latest
     command: -playfabTitleId 20CA2 -api http://${ADDRESS}:${API_PORT}/ -cdn http://${ADDRESS}:${CDN_PORT}/
     hostname: locator
     networks:
@@ -91,7 +91,7 @@ services:
     restart: unless-stopped
 
   buildplate-importer:
-    image: mcearth-reforged/reforge:utils-tools-buildplate-importer-latest
+    image: thelonedrifter/reforge:utils-tools-buildplate-importer-latest
     command: -eventbus eventbus -objectstore objectstore -worldFile /world/world -playerId ${BUILDPLATE_IMPORTER_PLAYER_ID}
     hostname: buildplate-importer
     networks:
