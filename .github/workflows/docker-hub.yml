@@ -20,7 +20,7 @@ jobs:
 
     - uses: docker/build-push-action@v5.3.0
       with:
-        tags: mcearth-reforged/reforge:eventbus-latest
+        tags: thelonedrifter/reforge:eventbus-latest
         target: reforge-eventbus
         push: true
         cache-from: type=gha
@@ -28,7 +28,7 @@ jobs:
 
     - uses: docker/build-push-action@v5.3.0
       with:
-        tags: mcearth-reforged/reforge:objectstore-latest
+        tags: thelonedrifter/reforge:objectstore-latest
         target: reforge-objectstore
         push: true
         cache-from: type=gha
@@ -36,7 +36,7 @@ jobs:
 
     - uses: docker/build-push-action@v5.3.0
       with:
-        tags: mcearth-reforged/reforge:apiserver-latest
+        tags: thelonedrifter/reforge:apiserver-latest
         target: reforge-apiserver
         push: true
         cache-from: type=gha
@@ -44,7 +44,7 @@ jobs:
 
     - uses: docker/build-push-action@v5.3.0
       with:
-        tags: mcearth-reforged/reforge:utils-locator-latest
+        tags: thelonedrifter/reforge:utils-locator-latest
         target: reforge-utils-locator
         push: true
         cache-from: type=gha
@@ -52,7 +52,7 @@ jobs:
 
     - uses: docker/build-push-action@v5.3.0
       with:
-        tags: mcearth-reforged/reforge:utils-cdn-latest
+        tags: thelonedrifter/reforge:utils-cdn-latest
         target: reforge-utils-cdn
         push: true
         cache-from: type=gha
@@ -60,7 +60,7 @@ jobs:
 
     - uses: docker/build-push-action@v5.3.0
       with:
-        tags: mcearth-reforged/reforge:buildplate-launcher-latest
+        tags: thelonedrifter/reforge:buildplate-launcher-latest
         target: reforge-buildplate-launcher
         push: true
         cache-from: type=gha
@@ -68,7 +68,7 @@ jobs:
 
     - uses: docker/build-push-action@v5.3.0
       with:
-        tags: mcearth-reforged/reforge:tappablesgenerator-latest
+        tags: thelonedrifter/reforge:tappablesgenerator-latest
         target: reforge-tappablesgenerator
         push: true
         cache-from: type=gha
@@ -76,7 +76,7 @@ jobs:
 
     - uses: docker/build-push-action@v5.3.0
       with:
-        tags: mcearth-reforged/reforge:utils-tools-buildplate-importer-latest
+        tags: thelonedrifter/reforge:utils-tools-buildplate-importer-latest
         target: reforge-utils-tools-buildplate-importer
         push: true
         cache-from: type=gha
