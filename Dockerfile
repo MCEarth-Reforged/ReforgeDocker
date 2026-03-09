@@ -17,7 +17,7 @@ RUN mkdir Fountain-fabric; wget -O - https://github.com/Project-Genoa/Fountain-f
 RUN mkdir Fountain-connector-plugin-base; wget -O - https://github.com/Project-Genoa/Fountain-connector-plugin-base/archive/ddb780d03e61785cc1e1cb9e920e7e5bf14a3ff7.tar.gz | gunzip | tar -C Fountain-connector-plugin-base -x --strip-components=1
 RUN mkdir Protocol; wget -O - https://github.com/Project-Genoa/Protocol/archive/b5b4225de434115c4098b13df7419bf2db61319f.tar.gz | gunzip | tar -C Protocol -x --strip-components=1
 WORKDIR /mce-reforged
-RUN mkdir Reforge; wget -O - https://github.com/MCEarth-Reforged/Reforge/archive/refs/heads/master.tar.gz | gunzip | tar -C Reforge-master -x --strip-components=1
+RUN mkdir Reforge; wget -O - https://github.com/MCEarth-Reforged/Reforge/archive/refs/heads/master.tar.gz | gunzip | tar -C Reforge -x --strip-components=1
 RUN mkdir Vienna-fabric; wget -O - https://github.com/Project-Genoa/Vienna-fabric/archive/7ecefce63402a7a6d5ddc0448e8bd4e98dc060c8.tar.gz | gunzip | tar -C Vienna-fabric -x --strip-components=1
 WORKDIR /fountain/Protocol
 RUN PATH=/java-8/bin:$PATH ./gradlew publishToMavenLocal
